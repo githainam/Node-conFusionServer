@@ -17,6 +17,7 @@ var dishRouter = require("./routes/dishRouter");
 // var youtubeRouter = require("./routes/youtubeRouter");
 // var cakeRouter = require("./routes/cakeRouter");
 var userRouter = require("./routes/usersRouter");
+const uploadRouter = require("./routes/uploadRouter");
 
 
 var app = express();
@@ -106,9 +107,12 @@ function auth(req, res, next) {
 
 // app.use("/", indexRouter);
 app.use("/users", userRouter);
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(auth);
+app.use("/dishes", dishRouter);
+app.use("/imageUpload", uploadRouter);
 
 function auth (req, res, next) {
   console.log(req.user);
@@ -124,7 +128,7 @@ function auth (req, res, next) {
 }
 
 
-app.use("/dishes", dishRouter);
+
 // app.use("/toppings", toppingRouter);
 // app.use("/promotions", promotionRouter);
 // app.use("/leaders", leaderRouter);

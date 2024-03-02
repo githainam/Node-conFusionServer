@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require('cors');
 
 const Dishes = require("../models/dishes");
 const dishRouter = express.Router();
@@ -252,7 +253,7 @@ dishRouter
     res.end("POST operation not supported on /dishes" + req.params.dishId);
   })
 
-  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  .put( authenticate.verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
@@ -290,7 +291,7 @@ dishRouter
       .catch((err) => next(err));
   })
   
-  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  .delete( authenticate.verifyUser, (req, res, next) => {
     Dishes.findById(req.params.dishId)
       .then(
         (dish) => {
