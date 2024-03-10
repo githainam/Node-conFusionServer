@@ -17,20 +17,31 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = config.secretKey;
 
 exports.jwtPassport = passport.use(
-    new JwtStrategy(opts, (jwt_payload, done) => {
-      User.findOne({ _id: jwt_payload._id })
-        .then((user) => {
-          if (user) {
-            return done(null, user);
-          } else {
-            return done(null, false);
-          }
-        })
-        .catch((error) => {
-          return done(error, false);
-        });
-    })
-  );
+  new JwtStrategy(opts, (jwt_payload, done) => {
+    User.findOne({ _id: jwt_payload._id })
+      .then((user) => {
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(null, false);
+        }
+      })
+      .catch((error) => {
+        return done(error, false);
+      });
+  })
+);
+
+exports.verifyAdmin = (req, res, next) => {
+  if (req.user && req.user.admin) {
+    return next();
+  } else {
+    const err = new Error("You are not authorized to perform this operation!");
+    err.status = 403;
+    return next(err);
+  }
+};
+
   
   
 
