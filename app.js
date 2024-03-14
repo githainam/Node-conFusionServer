@@ -44,7 +44,7 @@ app.all('*', (req, res, next) => {
   else {
   res.redirect(307, 'https://' + req.hostname + ':' + app.get('secPort') + req.url);
   }
-  });
+  });x
 
 app.use(cookieParser("18102002"));
 
