@@ -6,6 +6,7 @@ var ExtractJwt = require('passport-jwt').ExtractJwt;
 var jwt = require('jsonwebtoken'); //used to create, sign, and verify tokens
 
 var config = require('./config.js');
+var FacebookTokenStrategy = require('passport-facebook-token');
 
 exports.getToken = function(user) {
     return jwt.sign(user, config.secretKey,
@@ -42,9 +43,33 @@ exports.verifyAdmin = (req, res, next) => {
   }
 };
 
-  
-  
+exports.facebookPassport = passport.use(new FacebookTokenStrategy({
+  clientID: config.facebook.clientId,
+  clientSecret: config.facebook.clientSecret
+}, async (accessToken, refreshToken, profile, done) => {
+  try {
+      let user = await User.findOne({ facebookId: profile.id });
 
+      if (user) {
+          return done(null, user); // User found, return user
+      } else {
+          user = new User({
+              username: profile.displayName,
+              facebookId: profile.id,
+              firstname: profile.name.givenName,
+              lastname: profile.name.familyName
+          });
+
+          await user.save(); // Save the new user
+          return done(null, user); // Return the newly created user
+      }
+  } catch (err) {
+      return done(err, false); // Return error if any occurs
+  }
+}));
+
+  
+  
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
